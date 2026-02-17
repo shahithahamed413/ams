@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buttonhole Garments Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        /* Price Management Section */
+        .price-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .price-input-group {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .price-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .price-input-group input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .price-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .price-input-group .currency {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .current-prices {
+            display: flex;
+            gap: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .current-prices p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .current-prices span {
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .calculation-display {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .calc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+        }
+
+        .calc-item:last-child {
+            border-bottom: none;
+        }
+
+        .calc-item.total {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #667eea;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        /* View Selector */
+        .view-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .view-tab {
+            padding: 12px 25px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .view-tab:hover {
+            background: #f0f0f0;
+        }
+
+        .view-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .date-picker-container {
+            margin-top: 15px;
+        }
+
+        .date-picker-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .date-picker-container input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* Data Display */
+        .data-section {
+            min-height: 200px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-size: 1.2em;
+            padding: 40px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .summary-item label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-item value {
+            display: block;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close,
+        .close-edit {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close:hover,
+        .close-edit:hover {
+            color: #000;
+        }
+
+        #qrCodeContainer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        #qrCodeContainer canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #qrPaymentInfo {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        #qrPaymentInfo p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        #qrPaymentInfo strong {
+            color: #667eea;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .price-controls {
+                flex-direction: column;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .view-tabs {
+                flex-direction: column;
+            }
+
+            .data-table {
+                font-size: 0.9em;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .entry-actions {
+            white-space: nowrap;
+        }
+
+        /* Payment QR Code Section */
+        .payment-qr-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .payment-qr-setup {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        #paymentQRDisplay {
+            border: 2px solid #667eea;
+        }
+
+        #paymentQRImage {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-qr-preview {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* Mobile Responsive Improvements */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 10px;
+                border-radius: 10px;
+            }
+
+            header h1 {
+                font-size: 1.4em;
+                padding-bottom: 10px;
+            }
+
+            section {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            section h2 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+                padding-bottom: 8px;
+            }
+
+            .price-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .price-input-group {
+                min-width: 100%;
+            }
+
+            .price-input-group input {
+                padding: 14px 40px 14px 12px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .current-prices {
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 14px;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 14px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .calculation-display {
+                padding: 15px;
+            }
+
+            .calc-item {
+                font-size: 14px;
+                padding: 8px 0;
+            }
+
+            .calc-item.total {
+                font-size: 1.1em;
+            }
+
+            .view-tabs {
+                flex-direction: row;
+                gap: 5px;
+            }
+
+            .view-tab {
+                padding: 10px 15px;
+                font-size: 13px;
+                flex: 1;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                font-size: 12px;
+            }
+
+            .data-table thead {
+                display: none;
+            }
+
+            .data-table tbody {
+                display: block;
+            }
+
+            .data-table tr {
+                display: block;
+                margin-bottom: 15px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 10px;
+            }
+
+            .data-table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+                text-align: right;
+            }
+
+            .data-table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-align: left;
+                color: #667eea;
+            }
+
+            .data-table td:last-child {
+                border-bottom: none;
+            }
+
+            .entry-actions {
+                white-space: normal;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .summary-item {
+                padding: 12px;
+            }
+
+            .summary-item value {
+                font-size: 1.3em;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10% auto;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .qr-scanner-container {
+                max-width: 100%;
+            }
+
+            .payment-qr-setup {
+                padding: 15px;
+            }
+
+            #paymentQRImage {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) and (min-width: 481px) {
+            .container {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 1.6em;
+            }
+
+            section {
+                padding: 18px;
+            }
+
+            .data-table {
+                font-size: 0.85em;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Buttonhole Garments Management System</h1>
+        </header>
+
+        <!-- Price Management Section -->
+        <section class="price-section">
+            <h2>Price Management</h2>
+            <div class="price-controls">
+                <div class="price-input-group">
+                    <label for="fullHandPrice">Full Hand Price (per shirt):</label>
+                    <input type="number" id="fullHandPrice" min="0" step="0.01" placeholder="Enter price">
+                    <span class="currency">₹</span>
+                </div>
+                <div class="price-input-group">
+                    <label for="halfHandPrice">Half Hand Price (per shirt):</label>
+                    <input type="number" id="halfHandPrice" min="0" step="0.01" placeholder="Enter price">
+                    <span class="currency">₹</span>
+                </div>
+                <button id="savePrices" class="btn btn-primary">Save Prices</button>
+            </div>
+            <div class="current-prices">
+                <p><strong>Current Full Hand Price:</strong> <span id="currentFullPrice">₹0.00</span></p>
+                <p><strong>Current Half Hand Price:</strong> <span id="currentHalfPrice">₹0.00</span></p>
+            </div>
+        </section>
+
+        <!-- Payment QR Code Setup Section -->
+        <section class="payment-qr-section">
+            <h2>Your Payment QR Code</h2>
+            <p style="margin-bottom: 15px; color: #666;">Add your payment QR code or UPI ID so clients can scan and pay you</p>
+            
+            <div class="payment-qr-setup">
+                <div class="form-group">
+                    <label for="paymentUPI">UPI ID (e.g., yourname@paytm):</label>
+                    <input type="text" id="paymentUPI" placeholder="Enter your UPI ID">
+                    <small>Leave empty if you want to upload QR code image instead</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="qrCodeUpload">Or Upload Your Payment QR Code Image:</label>
+                    <input type="file" id="qrCodeUpload" accept="image/*">
+                    <small>Upload your bank/UPI payment QR code image</small>
+                </div>
+                
+                <button id="savePaymentQR" class="btn btn-primary">Save Payment QR Code</button>
+            </div>
+            
+            <div id="paymentQRDisplay" style="display: none; margin-top: 20px; text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Your Payment QR Code</h3>
+                <div id="paymentQRImageContainer" style="margin: 15px 0;">
+                    <img id="paymentQRImage" src="" alt="Payment QR Code" style="max-width: 300px; width: 100%; border: 2px solid #667eea; border-radius: 8px;">
+                </div>
+                <p id="paymentUPIDisplay" style="font-size: 18px; font-weight: bold; color: #667eea; margin-top: 10px;"></p>
+                <p style="color: #666; margin-top: 10px;">Clients can scan this QR code to make payments</p>
+                <button id="removePaymentQR" class="btn btn-danger" style="margin-top: 10px;">Remove QR Code</button>
+            </div>
+        </section>
+
+        <!-- Entry Form Section -->
+        <section class="entry-section">
+            <h2>Add New Entry</h2>
+            <form id="entryForm">
+                <div class="form-group">
+                    <label for="entryDate">Date:</label>
+                    <input type="date" id="entryDate" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullHandCount">Full Hand Shirts Count:</label>
+                        <input type="number" id="fullHandCount" min="0" value="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="halfHandCount">Half Hand Shirts Count:</label>
+                        <input type="number" id="halfHandCount" min="0" value="0" required>
+                    </div>
+                </div>
+                <div class="calculation-display">
+                    <div class="calc-item">
+                        <span>Full Hand Amount:</span>
+                        <span id="fullHandAmount">₹0.00</span>
+                    </div>
+                    <div class="calc-item">
+                        <span>Half Hand Amount:</span>
+                        <span id="halfHandAmount">₹0.00</span>
+                    </div>
+                    <div class="calc-item total">
+                        <span>Total Amount:</span>
+                        <span id="totalAmount">₹0.00</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Add Entry</button>
+            </form>
+        </section>
+
+        <!-- View Selector -->
+        <section class="view-selector">
+            <h2>View Data</h2>
+            <div class="view-tabs">
+                <button class="view-tab active" data-view="daily">Daily</button>
+                <button class="view-tab" data-view="weekly">Weekly</button>
+                <button class="view-tab" data-view="monthly">Monthly</button>
+                <button class="view-tab" data-view="yearly">Yearly</button>
+            </div>
+            <div class="view-controls">
+                <div id="datePickerContainer" class="date-picker-container">
+                    <label for="viewDate">Select Date:</label>
+                    <input type="date" id="viewDate">
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Display Section -->
+        <section class="data-section">
+            <div id="dataDisplay">
+                <p class="no-data">No entries found. Add your first entry above.</p>
+            </div>
+        </section>
+
+        <!-- QR Code Modal -->
+        <div id="qrModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Payment QR Code</h3>
+                <div id="qrCodeContainer"></div>
+                <div id="qrPaymentInfo"></div>
+                
+                <!-- Your Payment QR Code Section -->
+                <div id="yourPaymentQRSection" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #eee; display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">Scan to Pay</h3>
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <div id="yourPaymentQRDisplay"></div>
+                        <p id="yourUPIDisplay" style="font-size: 16px; font-weight: bold; color: #667eea; margin-top: 10px;"></p>
+                        <p style="color: #666; margin-top: 10px; font-size: 14px;">Client can scan this QR code to make payment</p>
+                    </div>
+                </div>
+                
+                <button id="downloadQR" class="btn btn-primary">Download Entry QR Code</button>
+            </div>
+        </div>
+
+        <!-- Edit Entry Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close-edit">&times;</span>
+                <h3>Edit Entry</h3>
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label for="editDate">Date:</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editFullHandCount">Full Hand Shirts Count:</label>
+                            <input type="number" id="editFullHandCount" min="0" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editHalfHandCount">Half Hand Shirts Count:</label>
+                            <input type="number" id="editHalfHandCount" min="0" value="0" required>
+                        </div>
+                    </div>
+                    <div class="calculation-display">
+                        <div class="calc-item">
+                            <span>Full Hand Amount:</span>
+                            <span id="editFullHandAmount">₹0.00</span>
+                        </div>
+                        <div class="calc-item">
+                            <span>Half Hand Amount:</span>
+                            <span id="editHalfHandAmount">₹0.00</span>
+                        </div>
+                        <div class="calc-item total">
+                            <span>Total Amount:</span>
+                            <span id="editTotalAmount">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="amountAdjustment">Adjust Total Amount (optional):</label>
+                        <input type="number" id="amountAdjustment" step="0.01" placeholder="Enter adjustment amount">
+                        <small>Use positive for increase, negative for decrease</small>
+                    </div>
+                    <button type="submit" class="btn btn-success">Update Entry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage Keys
+        const STORAGE_KEYS = {
+            PRICES: 'buttonholePrices',
+            ENTRIES: 'buttonholeEntries'
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entryDate').value = today;
+            document.getElementById('viewDate').value = today;
+
+            // Load saved data
+            loadPrices();
+            loadEntries();
+            loadPaymentQR();
+
+            // Event Listeners
+            setupEventListeners();
+
+            // Initial calculation
+            calculateAmounts();
+            calculateEditAmounts();
+        }
+
+        // Event Listeners Setup
+        function setupEventListeners() {
+            // Price Management
+            document.getElementById('savePrices').addEventListener('click', savePrices);
+            document.getElementById('fullHandPrice').addEventListener('input', calculateAmounts);
+            document.getElementById('halfHandPrice').addEventListener('input', calculateAmounts);
+
+            // Entry Form
+            document.getElementById('entryForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('fullHandCount').addEventListener('input', calculateAmounts);
+            document.getElementById('halfHandCount').addEventListener('input', calculateAmounts);
+
+            // View Tabs
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => switchView(e.target.dataset.view));
+            });
+
+            // Date Picker for views
+            document.getElementById('viewDate').addEventListener('change', () => {
+                const activeView = document.querySelector('.view-tab.active').dataset.view;
+                displayData(activeView);
+            });
+
+            // Edit Form
+            document.getElementById('editForm').addEventListener('submit', handleEditSubmit);
+            document.getElementById('editFullHandCount').addEventListener('input', calculateEditAmounts);
+            document.getElementById('editHalfHandCount').addEventListener('input', calculateEditAmounts);
+            document.getElementById('amountAdjustment').addEventListener('input', calculateEditAmounts);
+
+            // Modal Close Buttons
+            document.querySelector('.close').addEventListener('click', () => {
+                document.getElementById('qrModal').style.display = 'none';
+            });
+
+            document.querySelector('.close-edit').addEventListener('click', () => {
+                document.getElementById('editModal').style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                const qrModal = document.getElementById('qrModal');
+                const editModal = document.getElementById('editModal');
+                if (e.target === qrModal) {
+                    qrModal.style.display = 'none';
+                }
+                if (e.target === editModal) {
+                    editModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Price Management Functions
+        function loadPrices() {
+            const savedPrices = localStorage.getItem(STORAGE_KEYS.PRICES);
+            if (savedPrices) {
+                const prices = JSON.parse(savedPrices);
+                document.getElementById('fullHandPrice').value = prices.fullHandPrice || '';
+                document.getElementById('halfHandPrice').value = prices.halfHandPrice || '';
+                updatePriceDisplay(prices);
+            }
+        }
+
+        function savePrices() {
+            const fullHandPrice = parseFloat(document.getElementById('fullHandPrice').value) || 0;
+            const halfHandPrice = parseFloat(document.getElementById('halfHandPrice').value) || 0;
+
+            if (fullHandPrice < 0 || halfHandPrice < 0) {
+                alert('Prices cannot be negative!');
+                return;
+            }
+
+            const prices = {
+                fullHandPrice,
+                halfHandPrice
+            };
+
+            localStorage.setItem(STORAGE_KEYS.PRICES, JSON.stringify(prices));
+            updatePriceDisplay(prices);
+            calculateAmounts();
+            calculateEditAmounts();
+
+            alert('Prices saved successfully!');
+        }
+
+        function updatePriceDisplay(prices) {
+            document.getElementById('currentFullPrice').textContent = `₹${prices.fullHandPrice.toFixed(2)}`;
+            document.getElementById('currentHalfPrice').textContent = `₹${prices.halfHandPrice.toFixed(2)}`;
+        }
+
+        function getPrices() {
+            const savedPrices = localStorage.getItem(STORAGE_KEYS.PRICES);
+            if (savedPrices) {
+                return JSON.parse(savedPrices);
+            }
+            return { fullHandPrice: 0, halfHandPrice: 0 };
+        }
+
+        // Calculation Functions
+        function calculateAmounts() {
+            const prices = getPrices();
+            const fullHandCount = parseInt(document.getElementById('fullHandCount').value) || 0;
+            const halfHandCount = parseInt(document.getElementById('halfHandCount').value) || 0;
+
+            const fullHandAmount = fullHandCount * prices.fullHandPrice;
+            const halfHandAmount = halfHandCount * prices.halfHandPrice;
+            const totalAmount = fullHandAmount + halfHandAmount;
+
+            document.getElementById('fullHandAmount').textContent = `₹${fullHandAmount.toFixed(2)}`;
+            document.getElementById('halfHandAmount').textContent = `₹${halfHandAmount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+        }
+
+        function calculateEditAmounts() {
+            const prices = getPrices();
+            const fullHandCount = parseInt(document.getElementById('editFullHandCount').value) || 0;
+            const halfHandCount = parseInt(document.getElementById('editHalfHandCount').value) || 0;
+            const adjustment = parseFloat(document.getElementById('amountAdjustment').value) || 0;
+
+            const fullHandAmount = fullHandCount * prices.fullHandPrice;
+            const halfHandAmount = halfHandCount * prices.halfHandPrice;
+            let totalAmount = fullHandAmount + halfHandAmount + adjustment;
+
+            // Ensure total doesn't go negative
+            if (totalAmount < 0) {
+                totalAmount = 0;
+            }
+
+            document.getElementById('editFullHandAmount').textContent = `₹${fullHandAmount.toFixed(2)}`;
+            document.getElementById('editHalfHandAmount').textContent = `₹${halfHandAmount.toFixed(2)}`;
+            document.getElementById('editTotalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+        }
+
+        // Entry Management Functions
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const prices = getPrices();
+            if (prices.fullHandPrice === 0 && prices.halfHandPrice === 0) {
+                alert('Please set prices first!');
+                return;
+            }
+
+            const date = document.getElementById('entryDate').value;
+            const fullHandCount = parseInt(document.getElementById('fullHandCount').value) || 0;
+            const halfHandCount = parseInt(document.getElementById('halfHandCount').value) || 0;
+
+            if (fullHandCount === 0 && halfHandCount === 0) {
+                alert('Please enter at least one shirt count!');
+                return;
+            }
+
+            const fullHandAmount = fullHandCount * prices.fullHandPrice;
+            const halfHandAmount = halfHandCount * prices.halfHandPrice;
+            const totalAmount = fullHandAmount + halfHandAmount;
+
+            const entry = {
+                id: generateId(),
+                date,
+                fullHandCount,
+                halfHandCount,
+                fullHandAmount,
+                halfHandAmount,
+                totalAmount,
+                createdAt: new Date().toISOString()
+            };
+
+            saveEntry(entry);
+            resetForm();
+            displayData(document.querySelector('.view-tab.active').dataset.view);
+
+            // Generate and show QR code
+            generateQRCode(entry);
+            
+            // Show payment QR code if available
+            showPaymentQRInModal();
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function saveEntry(entry) {
+            const entries = getEntries();
+            entries.push(entry);
+            localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+        }
+
+        function getEntries() {
+            const savedEntries = localStorage.getItem(STORAGE_KEYS.ENTRIES);
+            return savedEntries ? JSON.parse(savedEntries) : [];
+        }
+
+        function loadEntries() {
+            const activeView = document.querySelector('.view-tab.active').dataset.view;
+            displayData(activeView);
+        }
+
+        function resetForm() {
+            document.getElementById('entryForm').reset();
+            document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+            calculateAmounts();
+        }
+
+        // View Management
+        function switchView(viewType) {
+            // Update active tab
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-view="${viewType}"]`).classList.add('active');
+
+            // Show/hide date picker based on view
+            const datePickerContainer = document.getElementById('datePickerContainer');
+            if (viewType === 'daily') {
+                datePickerContainer.style.display = 'block';
+            } else {
+                datePickerContainer.style.display = 'none';
+            }
+
+            displayData(viewType);
+        }
+
+        function displayData(viewType) {
+            const entries = getEntries();
+            if (entries.length === 0) {
+                document.getElementById('dataDisplay').innerHTML = '<p class="no-data">No entries found. Add your first entry above.</p>';
+                return;
+            }
+
+            let filteredEntries = [];
+            let summary = {
+                totalFullHand: 0,
+                totalHalfHand: 0,
+                totalFullHandAmount: 0,
+                totalHalfHandAmount: 0,
+                totalAmount: 0,
+                entryCount: 0
+            };
+
+            const selectedDate = new Date(document.getElementById('viewDate').value);
+            const today = new Date();
+
+            switch (viewType) {
+                case 'daily':
+                    filteredEntries = entries.filter(entry => entry.date === document.getElementById('viewDate').value);
+                    break;
+                case 'weekly':
+                    const weekStart = getWeekStart(selectedDate);
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    filteredEntries = entries.filter(entry => {
+                        const entryDate = new Date(entry.date);
+                        return entryDate >= weekStart && entryDate <= weekEnd;
+                    });
+                    break;
+                case 'monthly':
+                    filteredEntries = entries.filter(entry => {
+                        const entryDate = new Date(entry.date);
+                        return entryDate.getMonth() === selectedDate.getMonth() &&
+                               entryDate.getFullYear() === selectedDate.getFullYear();
+                    });
+                    break;
+                case 'yearly':
+                    filteredEntries = entries.filter(entry => {
+                        const entryDate = new Date(entry.date);
+                        return entryDate.getFullYear() === selectedDate.getFullYear();
+                    });
+                    break;
+            }
+
+            // Calculate summary
+            filteredEntries.forEach(entry => {
+                summary.totalFullHand += entry.fullHandCount;
+                summary.totalHalfHand += entry.halfHandCount;
+                summary.totalFullHandAmount += entry.fullHandAmount;
+                summary.totalHalfHandAmount += entry.halfHandAmount;
+                summary.totalAmount += entry.totalAmount;
+                summary.entryCount++;
+            });
+
+            // Sort entries by date (newest first)
+            filteredEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            renderDataTable(filteredEntries, summary, viewType);
+        }
+
+        function getWeekStart(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day;
+            return new Date(d.setDate(diff));
+        }
+
+        function renderDataTable(entries, summary, viewType) {
+            const dataDisplay = document.getElementById('dataDisplay');
+            
+            if (entries.length === 0) {
+                dataDisplay.innerHTML = `<p class="no-data">No entries found for ${viewType} view.</p>`;
+                return;
+            }
+
+            let html = `
+                <div class="summary-card">
+                    <h3>${viewType.charAt(0).toUpperCase() + viewType.slice(1)} Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <label>Total Entries</label>
+                            <value>${summary.entryCount}</value>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Full Hand Shirts</label>
+                            <value>${summary.totalFullHand}</value>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Half Hand Shirts</label>
+                            <value>${summary.totalHalfHand}</value>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Full Hand Amount</label>
+                            <value>₹${summary.totalFullHandAmount.toFixed(2)}</value>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Half Hand Amount</label>
+                            <value>₹${summary.totalHalfHandAmount.toFixed(2)}</value>
+                        </div>
+                        <div class="summary-item">
+                            <label>Grand Total Amount</label>
+                            <value>₹${summary.totalAmount.toFixed(2)}</value>
+                        </div>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Full Hand</th>
+                            <th>Half Hand</th>
+                            <th>Full Hand Amount</th>
+                            <th>Half Hand Amount</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            const isMobileView = window.innerWidth <= 480;
+            
+            entries.forEach(entry => {
+                const formattedDate = new Date(entry.date).toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                if (isMobileView) {
+                    html += `
+                        <tr>
+                            <td data-label="Date">${formattedDate}</td>
+                            <td data-label="Full Hand">${entry.fullHandCount}</td>
+                            <td data-label="Half Hand">${entry.halfHandCount}</td>
+                            <td data-label="Full Hand Amount">₹${entry.fullHandAmount.toFixed(2)}</td>
+                            <td data-label="Half Hand Amount">₹${entry.halfHandAmount.toFixed(2)}</td>
+                            <td data-label="Total Amount"><strong>₹${entry.totalAmount.toFixed(2)}</strong></td>
+                            <td data-label="Actions" class="entry-actions">
+                                <div class="action-buttons">
+                                    <button class="btn btn-info" onclick="showQRCode('${entry.id}')">QR Code</button>
+                                    <button class="btn btn-warning" onclick="editEntry('${entry.id}')">Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteEntry('${entry.id}')">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    html += `
+                        <tr>
+                            <td>${formattedDate}</td>
+                            <td>${entry.fullHandCount}</td>
+                            <td>${entry.halfHandCount}</td>
+                            <td>₹${entry.fullHandAmount.toFixed(2)}</td>
+                            <td>₹${entry.halfHandAmount.toFixed(2)}</td>
+                            <td><strong>₹${entry.totalAmount.toFixed(2)}</strong></td>
+                            <td class="entry-actions">
+                                <div class="action-buttons">
+                                    <button class="btn btn-info" onclick="showQRCode('${entry.id}')">QR Code</button>
+                                    <button class="btn btn-warning" onclick="editEntry('${entry.id}')">Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteEntry('${entry.id}')">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            dataDisplay.innerHTML = html;
+        }
+
+        // CRUD Operations
+        function editEntry(id) {
+            const entries = getEntries();
+            const entry = entries.find(e => e.id === id);
+            
+            if (!entry) {
+                alert('Entry not found!');
+                return;
+            }
+
+            document.getElementById('editId').value = entry.id;
+            document.getElementById('editDate').value = entry.date;
+            document.getElementById('editFullHandCount').value = entry.fullHandCount;
+            document.getElementById('editHalfHandCount').value = entry.halfHandCount;
+            document.getElementById('amountAdjustment').value = '';
+            
+            calculateEditAmounts();
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function handleEditSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('editId').value;
+            const entries = getEntries();
+            const entryIndex = entries.findIndex(e => e.id === id);
+
+            if (entryIndex === -1) {
+                alert('Entry not found!');
+                return;
+            }
+
+            const prices = getPrices();
+            const date = document.getElementById('editDate').value;
+            const fullHandCount = parseInt(document.getElementById('editFullHandCount').value) || 0;
+            const halfHandCount = parseInt(document.getElementById('editHalfHandCount').value) || 0;
+            const adjustment = parseFloat(document.getElementById('amountAdjustment').value) || 0;
+
+            const fullHandAmount = fullHandCount * prices.fullHandPrice;
+            const halfHandAmount = halfHandCount * prices.halfHandPrice;
+            let totalAmount = fullHandAmount + halfHandAmount + adjustment;
+
+            if (totalAmount < 0) {
+                totalAmount = 0;
+            }
+
+            entries[entryIndex] = {
+                ...entries[entryIndex],
+                date,
+                fullHandCount,
+                halfHandCount,
+                fullHandAmount,
+                halfHandAmount,
+                totalAmount,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+            document.getElementById('editModal').style.display = 'none';
+            
+            const activeView = document.querySelector('.view-tab.active').dataset.view;
+            displayData(activeView);
+
+            alert('Entry updated successfully!');
+        }
+
+        function deleteEntry(id) {
+            if (!confirm('Are you sure you want to delete this entry?')) {
+                return;
+            }
+
+            const entries = getEntries();
+            const filteredEntries = entries.filter(e => e.id !== id);
+            
+            localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(filteredEntries));
+            
+            const activeView = document.querySelector('.view-tab.active').dataset.view;
+            displayData(activeView);
+
+            alert('Entry deleted successfully!');
+        }
+
+        // QR Code Functions
+        function generateQRCode(entry) {
+            const qrData = createQRData(entry);
+            const qrContainer = document.getElementById('qrCodeContainer');
+            const paymentInfo = document.getElementById('qrPaymentInfo');
+
+            // Clear previous QR code
+            qrContainer.innerHTML = '';
+
+            // Create QR code
+            QRCode.toCanvas(qrContainer, qrData, {
+                width: 300,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, (error) => {
+                if (error) {
+                    console.error('QR Code generation error:', error);
+                    qrContainer.innerHTML = '<p style="color: red;">Error generating QR code</p>';
+                }
+            });
+
+            // Display payment information
+            const formattedDate = new Date(entry.date).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            paymentInfo.innerHTML = `
+                <p><strong>Payment Date:</strong> ${formattedDate}</p>
+                <p><strong>Full Hand Shirts:</strong> ${entry.fullHandCount} × ₹${(entry.fullHandAmount / entry.fullHandCount || 0).toFixed(2)} = ₹${entry.fullHandAmount.toFixed(2)}</p>
+                <p><strong>Half Hand Shirts:</strong> ${entry.halfHandCount} × ₹${(entry.halfHandAmount / entry.halfHandCount || 0).toFixed(2)} = ₹${entry.halfHandAmount.toFixed(2)}</p>
+                <p><strong>Total Amount:</strong> ₹${entry.totalAmount.toFixed(2)}</p>
+            `;
+
+            // Store entry ID for download
+            qrContainer.dataset.entryId = entry.id;
+
+            // Show modal
+            document.getElementById('qrModal').style.display = 'block';
+
+            // Setup download button
+            document.getElementById('downloadQR').onclick = () => downloadQRCode(entry.id);
+            
+            // Show payment QR code
+            showPaymentQRInModal();
+        }
+
+        function showPaymentQRInModal() {
+            const paymentQR = getPaymentQR();
+            const yourPaymentQRSection = document.getElementById('yourPaymentQRSection');
+            const yourPaymentQRDisplay = document.getElementById('yourPaymentQRDisplay');
+            const yourUPIDisplay = document.getElementById('yourUPIDisplay');
+            
+            if (paymentQR) {
+                yourPaymentQRSection.style.display = 'block';
+                if (paymentQR.image) {
+                    yourPaymentQRDisplay.innerHTML = `<img src="${paymentQR.image}" alt="Payment QR Code" style="max-width: 250px; width: 100%; border: 2px solid #667eea; border-radius: 8px;">`;
+                    yourUPIDisplay.textContent = '';
+                } else if (paymentQR.upiId) {
+                    // Generate QR code from UPI ID
+                    const upiString = `upi://pay?pa=${paymentQR.upiId}&pn=Buttonhole%20Garments&am=&cu=INR`;
+                    yourPaymentQRDisplay.innerHTML = '';
+                    QRCode.toCanvas(yourPaymentQRDisplay, upiString, {
+                        width: 250,
+                        margin: 2,
+                        color: {
+                            dark: '#000000',
+                            light: '#FFFFFF'
+                        }
+                    }, (error) => {
+                        if (error) {
+                            console.error('QR Code generation error:', error);
+                        }
+                    });
+                    yourUPIDisplay.textContent = paymentQR.upiId;
+                }
+            } else {
+                yourPaymentQRSection.style.display = 'none';
+            }
+        }
+
+        function showQRCode(id) {
+            const entries = getEntries();
+            const entry = entries.find(e => e.id === id);
+            
+            if (!entry) {
+                alert('Entry not found!');
+                return;
+            }
+
+            generateQRCode(entry);
+        }
+
+        function createQRData(entry) {
+            const formattedDate = new Date(entry.date).toLocaleDateString('en-IN');
+            return `Buttonhole Garments Payment
+Date: ${formattedDate}
+Full Hand: ${entry.fullHandCount} shirts - ₹${entry.fullHandAmount.toFixed(2)}
+Half Hand: ${entry.halfHandCount} shirts - ₹${entry.halfHandAmount.toFixed(2)}
+Total Amount: ₹${entry.totalAmount.toFixed(2)}
+Entry ID: ${entry.id}`;
+        }
+
+        function downloadQRCode(entryId) {
+            const canvas = document.querySelector('#qrCodeContainer canvas');
+            if (!canvas) {
+                alert('QR code not found!');
+                return;
+            }
+
+            const entries = getEntries();
+            const entry = entries.find(e => e.id === entryId);
+            const fileName = `payment_qr_${entry.date}_${entryId}.png`;
+
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        // Payment QR Code Functions
+        const PAYMENT_QR_STORAGE = 'buttonholePaymentQR';
+
+        document.getElementById('savePaymentQR').addEventListener('click', savePaymentQR);
+        document.getElementById('removePaymentQR').addEventListener('click', removePaymentQR);
+        document.getElementById('qrCodeUpload').addEventListener('change', handleQRCodeUpload);
+
+        function loadPaymentQR() {
+            const savedQR = localStorage.getItem(PAYMENT_QR_STORAGE);
+            if (savedQR) {
+                const qrData = JSON.parse(savedQR);
+                if (qrData.image) {
+                    document.getElementById('paymentQRImage').src = qrData.image;
+                    document.getElementById('paymentQRDisplay').style.display = 'block';
+                    document.getElementById('paymentUPIDisplay').textContent = '';
+                } else if (qrData.upiId) {
+                    generateQRFromUPI(qrData.upiId);
+                    document.getElementById('paymentUPIDisplay').textContent = qrData.upiId;
+                    document.getElementById('paymentQRDisplay').style.display = 'block';
+                }
+            }
+        }
+
+        function savePaymentQR() {
+            const upiId = document.getElementById('paymentUPI').value.trim();
+            const fileInput = document.getElementById('qrCodeUpload');
+            
+            if (!upiId && !fileInput.files.length) {
+                alert('Please enter UPI ID or upload QR code image!');
+                return;
+            }
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const qrData = {
+                        image: e.target.result,
+                        upiId: ''
+                    };
+                    localStorage.setItem(PAYMENT_QR_STORAGE, JSON.stringify(qrData));
+                    document.getElementById('paymentQRImage').src = e.target.result;
+                    document.getElementById('paymentUPIDisplay').textContent = '';
+                    document.getElementById('paymentQRDisplay').style.display = 'block';
+                    document.getElementById('paymentUPI').value = '';
+                    fileInput.value = '';
+                    alert('Payment QR code saved successfully!');
+                };
+                reader.readAsDataURL(file);
+            } else if (upiId) {
+                generateQRFromUPI(upiId);
+                const qrData = {
+                    image: '',
+                    upiId: upiId
+                };
+                localStorage.setItem(PAYMENT_QR_STORAGE, JSON.stringify(qrData));
+                document.getElementById('paymentUPIDisplay').textContent = upiId;
+                document.getElementById('paymentQRDisplay').style.display = 'block';
+                document.getElementById('qrCodeUpload').value = '';
+                alert('UPI ID saved successfully!');
+            }
+        }
+
+        function generateQRFromUPI(upiId) {
+            // Generate QR code from UPI ID
+            const upiString = `upi://pay?pa=${upiId}&pn=Buttonhole%20Garments&am=&cu=INR`;
+            const qrContainer = document.getElementById('paymentQRImageContainer');
+            qrContainer.innerHTML = '';
+            
+            QRCode.toCanvas(qrContainer, upiString, {
+                width: 300,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, (error) => {
+                if (error) {
+                    console.error('QR Code generation error:', error);
+                    qrContainer.innerHTML = '<p style="color: red;">Error generating QR code</p>';
+                }
+            });
+        }
+
+        function handleQRCodeUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('paymentUPI').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePaymentQR() {
+            if (confirm('Are you sure you want to remove your payment QR code?')) {
+                localStorage.removeItem(PAYMENT_QR_STORAGE);
+                document.getElementById('paymentQRDisplay').style.display = 'none';
+                document.getElementById('paymentUPI').value = '';
+                document.getElementById('qrCodeUpload').value = '';
+                document.getElementById('paymentQRImage').src = '';
+                document.getElementById('paymentUPIDisplay').textContent = '';
+                alert('Payment QR code removed!');
+            }
+        }
+
+        function getPaymentQR() {
+            const savedQR = localStorage.getItem(PAYMENT_QR_STORAGE);
+            if (savedQR) {
+                return JSON.parse(savedQR);
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>
